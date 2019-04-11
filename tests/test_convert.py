@@ -106,10 +106,10 @@ class TestConvert(unittest.TestCase):
             cls._assert_successful_conversion(prot, graph_def, actual, input_fn, decimals=decimals, **kwargs)
 
     def test_cnn_convert(self):
-        test_input = np.ones([1, 1, 28, 28])
+        test_input = np.ones([1, 1, 8, 8])
         self._test_with_ndarray_input_fn('cnn', test_input, protocol='Pond')
 
-        test_input = np.ones([1, 28, 28, 1])
+        test_input = np.ones([1, 8, 8, 1])
         self._test_with_ndarray_input_fn('cnn', test_input, protocol='Pond', data_format='NHWC')
 
     def test_matmul_convert(self):
@@ -211,6 +211,13 @@ class TestConvert(unittest.TestCase):
     def test_flatten_convert(self):
         test_input = np.random.uniform(size=(1, 3, 3, 2)).astype(np.float32)
         self._test_with_ndarray_input_fn('flatten', test_input, decimals=2, protocol='Pond')
+
+    def test_keras_conv2d_convert(self):
+        test_input = test_input = np.ones([1, 1, 8, 8])
+        self._test_with_ndarray_input_fn('cnn', test_input, protocol='Pond')
+
+        test_input = np.ones([1, 8, 8, 1])
+        self._test_with_ndarray_input_fn('cnn', test_input, protocol='Pond', data_format='NHWC')
 
 
 def export_argmax(filename, input_shape, axis):
@@ -329,7 +336,7 @@ def run_cnn(input, data_format="NCHW"):
     if data_format == "NCHW":
         x = tf.transpose(x, (0, 2, 3, 1))
 
-    filter = tf.constant(np.ones((5, 5, 1, 16)), dtype=tf.float32, name="weights")
+    filter = tf.constant(np.ones((3, 3, 1, 3)), dtype=tf.float32, name="weights")
     x = tf.nn.conv2d(x, filter, (1, 1, 1, 1), "SAME", name="nn_conv2d")
 
     with tf.Session() as sess:
@@ -344,7 +351,7 @@ def run_cnn(input, data_format="NCHW"):
 def export_cnn(filename: str, input_shape: List[int], data_format="NCHW"):
     input = tf.placeholder(tf.float32, shape=input_shape, name="input")
 
-    filter = tf.constant(np.ones((5, 5, 1, 16)), dtype=tf.float32, name="weights")
+    filter = tf.constant(np.ones((3, 3, 1, 3)), dtype=tf.float32, name="weights")
     x = tf.nn.conv2d(input, filter, (1, 1, 1, 1), "SAME", data_format=data_format, name="nn_conv2d")
 
     return export(x, filename)
