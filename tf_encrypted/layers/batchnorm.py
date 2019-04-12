@@ -45,10 +45,10 @@ class Batchnorm(core.Layer):
         # Batchnorm after Conv2D layer
         elif len(self.input_shape) == 4:
             N, C, H, W = self.input_shape
-            self.mean = self.mean.reshape(1, C, 1, 1)
-            self.variance = self.variance.reshape(1, C, 1, 1)
-            self.scale = self.scale.reshape(1, C, 1, 1)
-            self.offset = self.offset.reshape(1, C, 1, 1)
+            self.mean = self.mean.reshape((1, C, 1, 1))
+            self.variance = self.variance.reshape((1, C, 1, 1))
+            self.scale = self.scale.reshape((1, C, 1, 1))
+            self.offset = self.offset.reshape((1, C, 1, 1))
 
         denomtemp = 1.0 / np.sqrt(self.variance + self.variance_epsilon)
 
